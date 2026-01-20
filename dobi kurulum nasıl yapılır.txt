@@ -1,0 +1,54 @@
+DOBİ KURULUM / BUILD REHBERİ (PowerShell)
+
+Ön Gereksinimler
+- Windows 10/11
+- Node.js LTS (18+ önerilir)
+- npm (Node ile gelir)
+- Visual Studio Build Tools (node-gyp için gerekli olabilir)
+
+1) Projeyi temizleme ve bağımlılıkları kurma
+------------------------------------------------
+# Proje klasörüne girin
+cd C:\path\to\dobi
+
+# Temiz kurulum
+Remove-Item -Recurse -Force node_modules, dist -ErrorAction SilentlyContinue
+npm install
+
+2) Geliştirme modunda çalıştırma
+------------------------------------------------
+# Vite + Electron geliştirici modu
+npm run dev
+
+3) Build almak ve installer üretmek
+------------------------------------------------
+# Üretim build
+npm run build
+
+# Installer oluşturma (NSIS)
+npm run dist
+
+Installer çıktısı:
+- dist/ dizini içinde .exe kurulum dosyası oluşur.
+
+4) Olası hatalar ve çözümler
+------------------------------------------------
+- node-gyp / better-sqlite3 derleme hatası:
+  * Visual Studio Build Tools kurulu olduğundan emin olun.
+  * Yönetici PowerShell ile tekrar npm install çalıştırın.
+
+- Beyaz ekran (packaged):
+  * dist/renderer/index.html dosyasının paketlendiğini doğrulayın.
+  * preload dosyasının dist/preload/index.js olduğundan emin olun.
+
+- Migrations bulunamadı:
+  * build sonrası dist/main/db/migrations klasörünün oluştuğunu kontrol edin.
+  * npm run build:main komutunda cpx kopyalama başarılı olmalı.
+
+- Vite build hataları:
+  * Modal gibi UI bileşenlerinin ui.tsx içinde export edildiğini kontrol edin.
+
+5) İpuçları
+------------------------------------------------
+- Kurulum sorunları için "npm rebuild better-sqlite3" komutu denenebilir.
+- Üretim için npm run dist komutu öncesinde npm run build çalıştırılmalıdır.

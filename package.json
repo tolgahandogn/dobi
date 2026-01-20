@@ -1,0 +1,62 @@
+{
+  "name": "dobi",
+  "version": "1.0.0",
+  "description": "DOBİ offline-first construction/site management app",
+  "author": "",
+  "license": "MIT",
+  "main": "dist/main/main.js",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "cross-env VITE_DEV_SERVER_URL=http://localhost:5173 concurrently -k \"vite\" \"tsup src/main/main.ts --format cjs --out-dir dist/main --target es2020 --watch\" \"tsup src/main/preload/index.ts --format cjs --out-dir dist/preload --target es2020 --watch\" \"cpx \\\"src/main/db/migrations/*.sql\\\" dist/main/db/migrations --watch\" \"wait-on tcp:5173 && electron .\"",
+    "build:main": "tsup src/main/main.ts --format cjs --out-dir dist/main --target es2020 && cpx \"src/main/db/migrations/*.sql\" dist/main/db/migrations",
+    "build:preload": "tsup src/main/preload/index.ts --format cjs --out-dir dist/preload --target es2020",
+    "build": "npm run build:main && npm run build:preload && vite build",
+    "dist": "npm run build && electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.4.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.9",
+    "@types/node": "^22.10.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.0",
+    "cpx": "^1.5.0",
+    "cross-env": "^7.0.3",
+    "electron": "^31.3.1",
+    "electron-builder": "^24.13.3",
+    "tsup": "^8.2.4",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.dobi.app",
+    "productName": "DOBİ",
+    "files": [
+      "dist/**"
+    ],
+    "directories": {
+      "buildResources": "build"
+    },
+    "extraResources": [
+      {
+        "from": "dist/main/db/migrations",
+        "to": "migrations"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
